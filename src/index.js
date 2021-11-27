@@ -11,7 +11,17 @@ app.use(express.json());
 const users = [];
 
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+
+  const user = users.find((user) => user.username === username);
+
+  if (!user) {
+    return response.status(400).json({ error: "User not exists." });
+  }
+
+  request.user = user;
+
+  return next()
 }
 
 app.post("/users", (request, response) => {
@@ -27,22 +37,61 @@ app.post("/users", (request, response) => {
     id: uuidv4(),
     name,
     username,
-    todos,
+    todos: []
   });
-  
+
   return response.status(201).send("Created");
 });
 
 app.get("/todos", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+
+  return response.status(201).json(user.todos)
 });
 
 app.post("/todos", checksExistsUserAccount, (request, response) => {
   // Complete aqui
+  const { title, deadline } = request.body;
+  const { user } = request;
+
+  const todo = {
+    id: uuidv4(),
+    title,
+    done: false,
+    deadline: new Date(deadline),
+    created_at: new Date()
+  }
+
+  user.todos.push(todo);
+
+  return response.status(201).json(user.todos)
 });
 
 app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { title, deadline } = request.headers;
+  const { id } = request.params;
+  const { user } = request;
+
+  const todo = user.todos.find(todo => todo.id === id)
+
+  if (!todo) {
+    return response.status(404).json({ error: "Not exists" })
+  }
+
+  const newTodo = {
+    id: todo.id,
+    done: todo.done,
+    created_at: todo.created_at,
+
+    title,
+    deadline,
+    update_at: new Date()
+  }
+  // Precisa dar um replace do todo existente pelo novo
+
+  user.todos.push(newTodo)
+
+  return response.status(201).json(user.todos)
 });
 
 app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {

@@ -9,3 +9,11 @@ This is an application for task management. Is allowed create a **user** and **u
 - Delete a TODO.
 
 All this for each especify user(a **username** will be passed on **header**).
+
+## Routes
+POST `/users` - Create new User.
+- This route receive `name` and `username` in body of requisition. 
+
+POST `/todos` - Create new TODO.
+-  This route receive `title` and `deadline` in body. For this route is necessary username in query header;
+- `deadline` field is necessary pass correct date in following format `AGE-MOUNTH-DAY`. 
