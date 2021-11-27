@@ -17,3 +17,16 @@ POST `/users` - Create new User.
 POST `/todos` - Create new TODO.
 -  This route receive `title` and `deadline` in body. For this route is necessary username in query header;
 - `deadline` field is necessary pass correct date in following format `AGE-MOUNTH-DAY`. 
+
+GET `/todos` - Get All todos.
+- This route necessary username in query header. 
+
+PUT `/todos/:id` - Update TODO.
+-  This route receive `title` and `deadline` in body. For this route is necessary username in query header;
+- `deadline` field is necessary pass correct date in following format `AGE-MOUNTH-DAY`. 
+
+PATCH `/todos/:id/done` - Update Done in TODO.
+-  This route receive `id` on query params. For this route is necessary username in query header;
+
+DELETE `/todos/:id` - Delete TODO.
+-  This route receive `id` on query params. For this route is necessary username in query header;

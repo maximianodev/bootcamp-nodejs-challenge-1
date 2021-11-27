@@ -43,12 +43,6 @@ app.post("/users", (request, response) => {
   return response.status(201).send("Created");
 });
 
-app.get("/todos", checksExistsUserAccount, (request, response) => {
-  const { user } = request;
-
-  return response.status(201).json(user.todos)
-});
-
 app.post("/todos", checksExistsUserAccount, (request, response) => {
   // Complete aqui
   const { title, deadline } = request.body;
@@ -67,39 +61,49 @@ app.post("/todos", checksExistsUserAccount, (request, response) => {
   return response.status(201).json(user.todos)
 });
 
-app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
-  const { title, deadline } = request.headers;
-  const { id } = request.params;
+app.get("/todos", checksExistsUserAccount, (request, response) => {
   const { user } = request;
-
-  const todo = user.todos.find(todo => todo.id === id)
-
-  if (!todo) {
-    return response.status(404).json({ error: "Not exists" })
-  }
-
-  const newTodo = {
-    id: todo.id,
-    done: todo.done,
-    created_at: todo.created_at,
-
-    title,
-    deadline,
-    update_at: new Date()
-  }
-  // Precisa dar um replace do todo existente pelo novo
-
-  user.todos.push(newTodo)
 
   return response.status(201).json(user.todos)
 });
 
+app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
+  const { title, deadline } = request.body;
+  const { id } = request.params;
+  const { user } = request;
+
+  const todo = user.todos.find(todo => todo.id === id);
+
+  if (!todo) {
+    return response.status(404).json({ error: "Not exists" });
+  }
+
+  todo.title = title;
+  todo.deadline = deadline;
+  todo.update_at = new Date();
+
+  return response.status(201).json(todo);
+});
+
 app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { id } = request.params;
+  const { user } = request;
+  
+  const todo = user.todos.find(todo => todo.id === id)
+  todo.done = true
+  
+  console.log("🚀 ~ file: index.js ~ line 91 ~ app.patch ~ user", user)
+  return response.status(201).send() 
 });
 
 app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { id } = request.params;
+  const { user } = request;
+
+  const todosFiltered = user.todos.filter(todo => todo.id !== id);
+  user.todos = todosFiltered;
+
+  return response.status(201).json(user.todos);
 });
 
 module.exports = app;
